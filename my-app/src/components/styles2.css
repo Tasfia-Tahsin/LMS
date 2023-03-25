@@ -151,3 +151,9 @@
   .btn-outline-info:hover {
     color: #fff
   }
+  .search-bar {
+    position: absolute;
+    top: 40px;
+    right: 40px;
+  }
+  

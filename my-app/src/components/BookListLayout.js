@@ -7,8 +7,9 @@ import './styles2.css';
 
 export default function BookListLayout() {
   const [currentPage, setCurrentPage] = useState(1);
-  const [booksPerPage, setBooksPerPage] = useState(2);
+  const [booksPerPage, setBooksPerPage] = useState(6);
   const [bookList, setBookList] = useState([]);
+  const [searchTerm, setSearchTerm] = useState("");
 
   useEffect(() => {
     axios.get("http://localhost:3001/bookList").then((response) => {
@@ -18,13 +19,17 @@ export default function BookListLayout() {
 
   const indexOfLastBook = currentPage * booksPerPage;
   const indexOfFirstBook = indexOfLastBook - booksPerPage;
-  const currentBooks = bookList.slice(indexOfFirstBook, indexOfLastBook);
-
+  const currentBooks = bookList
+    .filter((book) =>
+      book.name.toLowerCase().includes(searchTerm.toLowerCase())
+    )
+    .slice(indexOfFirstBook, indexOfLastBook);
 
   const pageNumbers = [];
   for (let i = 1; i <= Math.ceil(bookList.length / booksPerPage); i++) {
     pageNumbers.push(i);
   }
+
   const deleteBook = (name) => {
     axios
       .delete(`http://localhost:3001/delete/${name}`)
@@ -41,7 +46,17 @@ export default function BookListLayout() {
   return (
     <div>
       <h2 style={{ textAlign: "center" }}>Book List</h2>
-      <table class="table" style={{ margin: "5%" }}>
+
+      <div className="search-bar">
+        <input
+          type="text"
+          placeholder="Search by book name"
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+        />
+      </div>
+
+      <table className="table" style={{ margin: "5%" }}>
         <thead>
           <tr>
             <th scope="col">#SL</th>
@@ -66,10 +81,10 @@ export default function BookListLayout() {
 
                   <button
                     type="button"
-                    class="btn btn-success"
+                    className="btn btn-success"
                     data-bs-toggle="modal"
                     data-bs-target="#staticBackdrop"
-                    onClick={()=>{
+                    onClick={() => {
                       navigate(`/updateBook/${book.id}`);
                     }}
                   >
@@ -91,8 +106,10 @@ export default function BookListLayout() {
           })}
         </tbody>
       </table>
+
       <div class="container " style={{ marginBottom: "10%" }}>
-        <div className="d-flex justify-content-center"style={{ margin: "4%" }}>
+
+      <div className="d-flex justify-content-center"style={{ margin: "4%" }}>
           <nav>
             <ul className="pagination">
               {pageNumbers.map((number) => (
@@ -116,7 +133,18 @@ export default function BookListLayout() {
           </button>
         </NavLink>
         </div>
+
       </div>
-    </div>
+
+
+
+      </div>
+
+
+
+
+
+
+
   );
 }
