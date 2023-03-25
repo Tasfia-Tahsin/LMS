@@ -1,0 +1,38 @@
+.container {
+  margin: 5%;
+  background-color: #f2f2f2;
+  padding: 20px;
+}
+
+.form-control:focus {
+  border-color: #8eb5e2;
+  box-shadow: 0 0 0 0.2rem rgba(74, 106, 143, 0.25);
+}
+
+.btn-info {
+  background-color: #1e90ff;
+  border-color: #1e90ff;
+}
+
+.btn-info:hover {
+  background-color: #007bff;
+  border-color: #007bff;
+}
+
+.btn-primary {
+  background-color: #5cb85c;
+  border-color: #5cb85c;
+}
+
+.btn-primary:hover {
+  background-color: #28a745;
+  border-color: #28a745;
+}
+
+.col-form-label {
+  color: #007bff;
+}
+
+.text-danger {
+  color: #dc3545;
+}

@@ -1,0 +1,7 @@
+1) Probable auth workflow:
+--------------------------
+Use pyrebase in the backend to authenticate. Store the returned auth info in the db.
+
+2) About phone number auth:
+---------------------------
+Phone number auth is only available for client side. Requires recaptcha. How to set the language to bangla?

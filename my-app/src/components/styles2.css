@@ -1,0 +1,153 @@
+/* BookListLayout.css */
+.table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 1rem;
+    font-weight: 400;
+    color: #212529;
+    background-color: #fff;
+    border: 1px solid #dee2e6;
+  }
+  
+  .table th,
+  .table td {
+    padding: 0.75rem;
+    vertical-align: top;
+    border-top: 1px solid #dee2e6;
+  }
+  
+  .table thead th {
+    vertical-align: bottom;
+    border-bottom: 2px solid #dee2e6;
+  }
+  
+  .table tbody + tbody {
+    border-top: 2px solid #dee2e6;
+  }
+  
+  .table-sm th,
+  .table-sm td {
+    padding: 0.3rem;
+  }
+  
+  .btn-primary {
+    color: #fff;
+    background-color: #007bff;
+    border-color: #007bff;
+  }
+  
+  .btn-primary:hover {
+    color: #fff;
+    background-color: #0069d9;
+    border-color: #0062cc;
+  }
+  
+  .btn-secondary {
+    color: #fff;
+    background-color: #6c757d;
+    border-color: #6c757d;
+  }
+  
+  .btn-secondary:hover {
+    color: #fff;
+    background-color: #5a6268;
+    border-color: #545b62;
+  }
+  
+  .btn-success {
+    color: #fff;
+    background-color: #28a745;
+    border-color: #28a745;
+  }
+  
+  .btn-success:hover {
+    color: #fff;
+    background-color: #218838;
+    border-color: #1e7e34;
+  }
+  
+  .btn-info {
+    color: #fff;
+    background-color: #17a2b8;
+    border-color: #17a2b8;
+  }
+  
+  .btn-info:hover {
+    color: #fff;
+    background-color: #138496;
+    border-color: #117a8b;
+  }
+  
+  .btn-warning {
+    color: #fff;
+    background-color: #ffc107;
+    border-color: #ffc107;
+  }
+  
+  .btn-warning:hover {
+    color: #fff;
+    background-color: #e0a800;
+    border-color: #d39e00;
+  }
+  
+  .btn-danger {
+    color: #fff;
+    background-color: #dc3545;
+    border-color: #dc3545;
+  }
+  
+  .btn-danger:hover {
+    color: #fff;
+    background-color: #c82333;
+    border-color: #bd2130;
+  }
+  
+  .btn-outline-primary {
+    color: #007bff;
+    background-color: transparent;
+    background-image: none;
+    border-color: #007bff;
+  }
+  
+  .btn-outline-primary:hover {
+    color: #fff;
+    background-color: #007bff;
+    border-color: #007bff;
+  }
+  
+  .btn-outline-secondary {
+    color: #6c757d;
+    background-color: transparent;
+    background-image: none;
+    border-color: #6c757d;
+  }
+  
+  .btn-outline-secondary:hover {
+    color: #fff;
+    background-color: #6c757d;
+    border-color: #6c757d;
+  }
+  
+  .btn-outline-success {
+    color: #28a745;
+    background-color: transparent;
+    background-image: none;
+    border-color: #28a745;
+  }
+  
+  .btn-outline-success:hover {
+    color: #fff;
+    background-color: #28a745;
+    border-color: #28a745;
+  }
+  
+  .btn-outline-info {
+    color: #17a2b8;
+    background-color: transparent;
+    background-image: none;
+    border-color: #17a2b8;
+  }
+  
+  .btn-outline-info:hover {
+    color: #fff
+  }
