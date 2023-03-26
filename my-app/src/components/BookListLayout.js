@@ -21,7 +21,9 @@ export default function BookListLayout() {
   const indexOfFirstBook = indexOfLastBook - booksPerPage;
   const currentBooks = bookList
     .filter((book) =>
-      book.name.toLowerCase().includes(searchTerm.toLowerCase())
+      book.name.toLowerCase().includes(searchTerm.toLowerCase())||
+      book.author.toLowerCase().includes(searchTerm.toLowerCase())||
+      book.genre.toLowerCase().includes(searchTerm.toLowerCase())
     )
     .slice(indexOfFirstBook, indexOfLastBook);
 
@@ -50,11 +52,13 @@ export default function BookListLayout() {
       <div className="search-bar">
         <input
           type="text"
-          placeholder="Search by book name"
+          placeholder="Search by book name, author or genre "
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
         />
       </div>
+      
+      
 
       <table className="table" style={{ margin: "5%" }}>
         <thead>
@@ -107,14 +111,13 @@ export default function BookListLayout() {
         </tbody>
       </table>
 
-      <div class="container " style={{ marginBottom: "10%" }}>
+      <div class="container" style={{ marginBottom: "10%" }}>
 
       <div className="d-flex justify-content-center"style={{ margin: "4%" }}>
-          <nav>
+          <nav> 
             <ul className="pagination">
               {pageNumbers.map((number) => (
                 <li key={number} className="page-item">
-                  Page:
                   <button
                     onClick={() => setCurrentPage(number)}
                     className="btn btn-outline-dark"
