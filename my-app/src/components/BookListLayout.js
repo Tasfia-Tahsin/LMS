@@ -138,16 +138,6 @@ export default function BookListLayout() {
         </div>
 
       </div>
-
-
-
       </div>
-
-
-
-
-
-
-
   );
 }

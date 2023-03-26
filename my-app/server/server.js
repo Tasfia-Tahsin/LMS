@@ -34,8 +34,16 @@ app.get("/bookList",(req,res)=>{
     res.send(result)
 
   })
+})
 
+app.get("/userList",(req,res)=>{
 
+  const sqlRetrieve = "SELECT * FROM USER "
+  db.query(sqlRetrieve,(err,result)=>{
+    console.log(result)
+    res.send(result)
+
+  })
 })
 
 
@@ -52,6 +60,18 @@ app.post("/insert",(req,res)=>{
 
 })
 
+app.post("/add",(req,res)=>{
+
+  const id = req.body.id
+  const password = req.body.password
+  const libraryCard = req.body.libraryCard
+
+  const sqlInsert = "INSERT INTO USER (id,password,libraryCard) VALUES (?,?,?)"
+  db.query(sqlInsert,[id,password,libraryCard],(err,result)=>{
+    console.log(err)
+  })
+
+})
 
 
 

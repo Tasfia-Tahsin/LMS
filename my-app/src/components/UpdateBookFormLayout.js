@@ -40,6 +40,7 @@ export default function UpdateBookFormLayout() {
   };
 
   const handleSubmit = (e) => {
+    
     e.preventDefault();
     let nameRegex = /^[a-zA-Z]+$/;
   
