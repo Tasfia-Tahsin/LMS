@@ -3,9 +3,11 @@ import React, { useEffect, useState } from "react";
 import { NavLink } from "react-router-dom";
 import { useNavigate } from 'react-router-dom';
 import { useParams } from 'react-router-dom';
+//import Header from "../components/Header";
+import Header from "./Header"
 import './styles2.css';
 
-export default function BookListLayout() {
+export default function BookListLayoutUser() {
   const [currentPage, setCurrentPage] = useState(1);
   const [booksPerPage, setBooksPerPage] = useState(6);
   const [bookList, setBookList] = useState([]);
@@ -16,6 +18,53 @@ export default function BookListLayout() {
       setBookList(response.data);
     });
   }, []);
+
+/*
+function checkAvailability(id) {
+  axios.get(`/api/checkAvailability/${id}`)
+    .then(response => {
+      if (response.data.available) {
+        alert(`Book ${id} is available`);
+        navigate(`/borrowBook/${id}`);
+
+      } else {
+        alert(`Book ${id} is not available`);
+      }
+    })
+    .catch(error => console.error(error));
+}
+*/
+
+  async function checkAvailability(id) {
+    try {
+      const response = await axios.get(`http://localhost:3001/api/checkAvailability/${id}`);
+      console.log(response.data)
+      
+      if(response.data.available){
+        navigate(`/borrowBook/${id}`);
+     }
+     else alert("not abailable")
+    } catch (error) {
+      console.error(error);
+    }
+  }
+  
+/*
+  const checkAvailability = (id) => {
+    //e.preventDefault();
+    axios
+        .get(`/api/checkAvailability?id=${id}`)
+      .then((response) => {
+        if (response.data.loggedIn) {
+          // Navigate to the user dashboard
+          window.location.href = `/borrowBook/${id}`;
+        } else {
+          alert("Invalid Id card Number or Password! ");
+          //setErrorMessage(response.data.message);
+        }
+      });
+  };
+*/
 
   const indexOfLastBook = currentPage * booksPerPage;
   const indexOfFirstBook = indexOfLastBook - booksPerPage;
@@ -32,21 +81,14 @@ export default function BookListLayout() {
     pageNumbers.push(i);
   }
 
-  const deleteBook = (name) => {
-    axios
-      .delete(`http://localhost:3001/delete/${name}`)
-      .then((response) => {
-        // update the bookList state after deleting the book
-        setBookList(bookList.filter((book) => book.name !== name));
-      })
-      .catch((error) => {
-        console.log(error);
-      });
-  };
+
+  
+  
   const navigate = useNavigate();
 
   return (
     <div>
+      <Header />
       <h2 style={{ textAlign: "center" }}>Book List</h2>
 
       <div className="search-bar">
@@ -81,31 +123,35 @@ export default function BookListLayout() {
                 <td>{book.author}</td>
                 <td>{book.genre}</td>
                 <td>
-                  {/* <NavLink to={`/${book.id}'`}><button type="button" className="btn btn-success">Update</button></NavLink> */}
-
                   <button
-                    type="button"
-                    className="btn btn-success"
-                    data-bs-toggle="modal"
-                    data-bs-target="#staticBackdrop"
                     onClick={() => {
-                      navigate(`/updateBook/${book.id}`);
+                      
+                        // const data = checkAvailability(book.id)
+                        // console.log(data)
+                       checkAvailability(book.id)
+                        // .then(isAvailable => {
+                        //     if (isAvailable) {
+                        //     navigate(`/borrowBook/${book.id}`);
+                        //     } else {
+                        //     alert("Not available for borrowing!");
+                        //     }
+                        // });
                     }}
+                    className="btn btn-danger"
                   >
-                    Update
+                    Borroww
                   </button>
                 </td>
                 <td>
                   <button
                     onClick={() => {
-                      deleteBook(book.name);
+                      //deleteBook(book.name);
                     }}
                     className="btn btn-danger"
                   >
-                    Delete
+                    Return
                   </button>
                 </td>
-               
               </tr>
             );
           })}

@@ -18,9 +18,6 @@ export default function UpdateBookFormLayout() {
   const updateBook = (name , author, genre) => {
     
     console.log("Inside updateBook from updateBookFormLayout");
-    console.log(idKey)
-    console.log(name);
-    console.log(author);
     axios
       .put(`http://localhost:3001/update/${idKey}`, {
         name: name,

@@ -135,6 +135,12 @@ export default function AddUserFormLayout() {
               Add
             </button>
           </div>
+          <NavLink to="/userList">
+          {" "}
+          <button type="button" class="btn btn-primary">
+            User Lists
+          </button>
+        </NavLink>
         </form>
         </div>
     </div>

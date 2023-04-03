@@ -36,6 +36,16 @@ app.get("/bookList",(req,res)=>{
   })
 })
 
+app.get("/borrowedBookList",(req,res)=>{
+
+  const sqlRetrieve = "SELECT * FROM BORROW"
+  db.query(sqlRetrieve,(err,result)=>{
+    console.log(result)
+    res.send(result)
+
+  })
+})
+
 app.get("/userList",(req,res)=>{
 
   const sqlRetrieve = "SELECT * FROM USER "
@@ -76,18 +86,24 @@ app.post("/add",(req,res)=>{
 
 
 app.delete("/delete/:name",(req,res)=>{
-
   const name = req.params.name
- 
   const sqlDelete = "DELETE FROM LIBRARY WHERE name = ?"
-
   db.query(sqlDelete,name,(err,result)=>{
-
     if(err){
     console.log(err)
     }
   })
+})
 
+
+app.delete("/ret/:id",(req,res)=>{
+  const id = req.params.id;
+  const sqlDelete = "DELETE FROM BORROW WHERE id = ?";
+  db.query(sqlDelete,id,(err,result)=>{
+    if(err){
+    console.log(err)
+    }
+  })
 })
 
  app.put('/update/:id', (req, res) => {
@@ -105,6 +121,132 @@ app.delete("/delete/:name",(req,res)=>{
     }
   });
 });
+
+/*
+app.post("/userLogin", (req, res) => {
+  const { libraryCard, password } = req.body;
+  const sqlQuery = "SELECT * FROM USER WHERE libraryCard = ? AND password = ?";
+  db.query(sqlQuery, [libraryCard, password], (err, result) => {
+    if (err) {
+      console.error(err);
+      res.status(500).send("Internal server error");
+    } else if (result.length === 0) {
+      res.status(401).send("Invalid library card number or password");
+    } else {
+      // User is authenticated
+      const user = result[0];
+      res.send(`Welcome ${user.libraryCard} !`);
+    }
+  });
+});
+*/
+app.post('/userLogin', (req, res) => {
+  const { libraryCard, password } = req.body;
+  const sql = 'SELECT * FROM USER WHERE libraryCard = ? AND password = ?'  ;
+  db.query(sql, [libraryCard, password], (err, results) => {
+    if (err) {
+      console.error(err);
+      res.status(500).json({ message: 'Internal server error' });
+    } else if (results.length === 0) {
+      res.status(401).json({ message: 'Invalid library card number' });
+    } else {
+      const user = results[0];
+      if (user.password === password) {
+        // Passwords match, user is authenticated
+        res.json({ loggedIn: true });
+      } else {
+        res.status(401).json({ message: 'Invalid password' });
+      }
+    }
+  });
+});
+
+app.post('/managerLogin', (req, res) => {
+  const { id, password } = req.body;
+  const sql = 'SELECT * FROM MANAGER WHERE id = ? AND password = ?'  ;
+  db.query(sql, [id, password], (err, results) => {
+    if (err) {
+      console.error(err);
+      res.status(500).json({ message: 'Internal server error' });
+    } else if (results.length === 0) {
+      //alert("Login hoy nai!");
+      res.status(401).json({ message: 'Invalid library card number' });
+    } else {
+      const user = results[0];
+      if (user.password === password) {
+        // Passwords match, user is authenticated
+        res.json({ loggedIn: true });
+      } else {
+        res.status(401).json({ message: 'Invalid password' });
+      }
+    }
+  });
+});
+/*
+app.get('/api/checkAvailability/:id', (req, res) => {
+  //const { id } = req.query;
+  const { id } = req.params.id
+  const result = db.query('SELECT * FROM CRUDDATABASE.LIBRARY WHERE id = ? AND availability = 1', [id]);
+  if (result.length > 0) {
+    res.json({ available: true });
+  } else {
+    res.json({ available: false });
+  }
+});
+*/
+app.get("/api/checkAvailability/:id", (req, res) => {
+  const id = req.params.id;
+
+  const sqlQuery = 'SELECT * FROM CRUDDATABASE.LIBRARY WHERE id = ? AND availability = 1';
+  db.query(sqlQuery, [id], (err, result) => {
+    if (err) {
+      console.log(err);
+      res.send('Error retrieving book availability');
+    } else if (result.length === 0) {
+      res.json({ available: false });
+    } else {
+      res.json({ available: true });
+    }
+    // res.send(result)
+  });
+});
+
+app.put('/borrow/:id', (req, res) => {
+  const id = req.params.id;
+  const { libraryCard, password, borrowDate } = req.body;
+
+  const sqlQuery = 'UPDATE CRUDDATABASE.LIBRARY SET availability = 0 WHERE id = ?';
+  db.query(sqlQuery, [id], (err, result) => {
+    if (err) {
+      console.log(err);
+      res.status(500).send('Error borrowing book');
+    } else if (result.affectedRows === 0) {
+      res.status(404).send('Book not found or already borrowed');
+    } else {
+      res.status(200).send('Book borrowed successfully');
+    }
+  });
+});
+
+app.post('/addToBorrow/:id', (req, res) => {
+  const idBook = req.params.id;
+  const { libraryCard,password, borrowDate } = req.body;
+//const idUser = req.body.libraryCard ;
+//const date = req.body.borrowDate; 
+console.log(libraryCard);
+  const insertBorrowQuery = 'INSERT INTO BORROW ( idUser,idBook, date) VALUES (?, ?, ?)';
+  db.query(insertBorrowQuery, [ libraryCard,idBook, borrowDate], (insertBorrowErr, insertBorrowResult) => {
+    if (insertBorrowErr) {
+      console.log(insertBorrowErr);
+      res.status(500).send('Error adding book to borrow list');
+    } else {
+      res.status(200).send('Book added to borrow list successfully');
+    }
+  });
+});
+
+
+
 
 
 

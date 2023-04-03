@@ -43,7 +43,12 @@ export default function UserListLayout() {
             <th scope="col">id</th>
             <th scope="col">libraryCard</th>
             <th scope="col">password</th>
-           
+            <th scope="col-2" style={{ textAlign: "center" }}>
+              Action
+            </th>
+            <th scope="col-2" style={{ textAlign: "center" }}>
+              
+            </th>
           </tr>
         </thead>
         <tbody>
@@ -54,7 +59,44 @@ export default function UserListLayout() {
                 <td>{user.id}</td>
                 <td>{user.libraryCard}</td>
                 <td>{user.password}</td>
+
+
+
+
+                <td>
+                  {/* <NavLink to={`/${book.id}'`}><button type="button" className="btn btn-success">Update</button></NavLink> */}
+
+                  <button
+                    type="button"
+                    className="btn btn-success"
+                    data-bs-toggle="modal"
+                    data-bs-target="#staticBackdrop"
+                    onClick={() => {
+                      //navigate(`/updateBook/${book.id}`);
+                    }}
+                  >
+                    Edit
+                  </button>
+                </td>
+                <td>
+                  <button
+                    onClick={() => {
+                      //deleteBook(book.name);
+                    }}
+                    className="btn btn-danger"
+                  >
+                    Delete
+                  </button>
+                </td>
                 
+
+
+
+
+
+
+
+
               </tr>
             );
           })}
