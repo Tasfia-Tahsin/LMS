@@ -72,6 +72,7 @@ export default function AddBookFormLayout() {
     console.log("Form submitted");
     console.log(e);
     addBook(); // Call the function to submit the data to the database
+    alert("Successfully added");
   } else {
     console.log("Please fill out all fields");
   }

@@ -4,6 +4,7 @@ import { NavLink } from "react-router-dom";
 import { useNavigate } from 'react-router-dom';
 import { useParams } from 'react-router-dom';
 import './styles2.css';
+import HeaderManager from "./HeaderManager";
 
 export default function BookListLayout() {
   const [currentPage, setCurrentPage] = useState(1);
@@ -47,6 +48,7 @@ export default function BookListLayout() {
 
   return (
     <div>
+      <HeaderManager />
       <h2 style={{ textAlign: "center" }}>Book List</h2>
 
       <div className="search-bar">

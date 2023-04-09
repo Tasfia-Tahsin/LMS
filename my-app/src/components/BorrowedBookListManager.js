@@ -4,42 +4,27 @@ import { NavLink } from "react-router-dom";
 import { useNavigate } from 'react-router-dom';
 import { useParams } from 'react-router-dom';
 //import Header from "../components/Header";
-import Header from "./Header"
-import './styles2.css';
 
-export default function BorrowedBookList() {
+import './styles2.css';
+import HeaderManager from "./HeaderManager";
+
+export default function BorrowedBookListManager() {
   const [currentPage, setCurrentPage] = useState(1);
   const [booksPerPage, setBooksPerPage] = useState(6);
   const [bookList, setBookList] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
-  const sessionID = sessionStorage.getItem("sessionID");
+  //const sessionID = sessionStorage.getItem("sessionID");
   
   useEffect(() => {
-    const idUser = sessionStorage.getItem("sessionID");
-    if (idUser) {
-      axios.get(`http://localhost:3001/borrowedBookList/${idUser}`).then((response) => {
+    //const idUser = sessionStorage.getItem("sessionID");
+   // if (idUser) {
+      axios.get('http://localhost:3001/borrowedBookListManager').then((response) => {
         setBookList(response.data);
       });
-    }
+    //}
   }, []);
 
-    const returnBook = (id, idBook) => {
     
-      
-      axios.delete(`http://localhost:3001/ret/${id}`);
-      axios.put(`http://localhost:3001/makeAvailable/${idBook}`,{
-        availability : 1 
-      })
-    
-      .then((response) => {
-        // update the bookList state after deleting the book
-        setBookList(bookList.filter((book) => book.id !== id));
-        navigate(`/borrowedBookList`);
-      })
-      .catch((error) => {
-        console.log(error);
-      });
-  };
   
  /*
   const returnBook = (id) => {
@@ -82,7 +67,7 @@ export default function BorrowedBookList() {
 
   return (
     <div>
-      <Header />
+      <HeaderManager />
       <h2 style={{ textAlign: "center" }}>Book List</h2>
 
       <div className="search-bar">
@@ -116,17 +101,6 @@ export default function BorrowedBookList() {
                 <td>{book.idUser}</td>
                 <td>{book.idBook}</td>
                 <td>{book.date}</td>
-                <td>
-                  <button
-                    onClick={() => {
-                      returnBook(book.id, book.idBook);
-                      //makeAvailable(book.id);
-                    }}
-                    className="btn btn-danger"
-                  >
-                    Return
-                  </button>
-                </td>
               </tr>
             );
           })}

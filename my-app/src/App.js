@@ -11,8 +11,11 @@ import LandingPage from "./components/LandingPage";
 import AddUserFormLayout from "./components/UserEntry";
 import UserNotification from "./components/UserNotification";
 import BorrowedBookList from "./components/BorrowedBookList";
+import BorrowedBookListManager from "./components/BorrowedBookListManager";
+import Trending from "./components/Trending";
 import React, { useState, useEffect } from "react";
 import "./App.css";
+import Overdue from "./components/Overdue";
 function App() {
 
   const [message, setMessage] = useState("");
@@ -39,9 +42,13 @@ function App() {
           <Route path="/add" element={<AddUserFormLayout />} />
           <Route path="/landingPage" element={<LandingPage />} />
           <Route path="/userLogin" element={<UserLogin/>} />
+          <Route path="/overdue" element={<Overdue/>} />
           <Route path="/managerLogin" element={<ManagerLogin/>} />
           <Route path="/borrowedBookList" element={<BorrowedBookList/>} />
           <Route path="/userNotification" element={<UserNotification/>} />
+          <Route path="/trending" element={<Trending/>} />
+          <Route path="/borrowedBookListManager" element={<BorrowedBookListManager/>} />
+          BorrowedBookListManager
         </Routes>
     </Router>
     

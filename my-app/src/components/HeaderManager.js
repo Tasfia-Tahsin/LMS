@@ -9,26 +9,28 @@ import { Navigate } from "react-router-dom";
 
 
 
-function Header() {
+function HeaderManager() {
   const [loggedOut, setLoggedOut] = useState(false);
   
   const handleLogout = (e) => {
-     Navigate("/userLogin");
+     Navigate("/landingPage");
   }
   return (
     <nav>
-      <ul>
+      <ul>Reports: 
         <li>
-          <Link to="/userNotification">My Notifications</Link>
+          <Link to="/overdue">Overdue Books</Link>
         </li>
         <li>
-          <Link to="/borrowedBookListManager">My Borrowings</Link>
+          <Link to="/borrowedBookListManager">Borrowed Books</Link>
         </li>
-      
+        <li>
+          <Link to="/trending">Trending</Link>
+        </li>
       </ul>
       
       <div class="small-div">
-        <Link to="/userLogin">
+        <Link to="/landingPage">
           <button  class ="my-button">
             Log Out
           </button>
@@ -41,4 +43,4 @@ function Header() {
   );
 }
 
-export default Header;
+export default HeaderManager;

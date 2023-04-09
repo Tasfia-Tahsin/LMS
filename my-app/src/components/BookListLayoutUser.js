@@ -3,7 +3,6 @@ import React, { useEffect, useState } from "react";
 import { NavLink } from "react-router-dom";
 import { useNavigate } from 'react-router-dom';
 import { useParams } from 'react-router-dom';
-//import Header from "../components/Header";
 import Header from "./Header"
 import './styles2.css';
 
@@ -12,59 +11,110 @@ export default function BookListLayoutUser() {
   const [booksPerPage, setBooksPerPage] = useState(6);
   const [bookList, setBookList] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const sessionID = sessionStorage.getItem("sessionID");
+  const [book, setBook] = useState({});
+  const [borrowList, setBorrowList] = useState([]);
+
+  const { idKey } = useParams();
+  //const  dateString= 
+  //const currentDate = new Date();
+
+
+const cDate = new Date();
+const year = cDate.getFullYear();
+const month = (cDate.getMonth() + 1).toString().padStart(2, '0');
+const day = cDate.getDate().toString().padStart(2, '0');
+const curDate = `${year}${month}${day}`;
+const currentDate = parseInt(curDate, 10);
+console.log(currentDate); // Output: 20230406
 
   useEffect(() => {
-    axios.get("http://localhost:3001/bookList").then((response) => {
-      setBookList(response.data);
-    });
+    
+    if(sessionID){
+      axios
+        .get("http://localhost:3001/auth/check")
+        .then((response) => {
+          setIsLoggedIn(response.data.isLoggedIn);
+        })
+        .catch((error) => {
+          console.error(error);
+        });
+    
+      axios.get("http://localhost:3001/bookList").then((response) => {
+        setBookList(response.data);
+      });
+   }
+   else{
+    alert("Login first.")
+    navigate("/userLogin");
+   }
   }, []);
-
-/*
-function checkAvailability(id) {
-  axios.get(`/api/checkAvailability/${id}`)
-    .then(response => {
-      if (response.data.available) {
-        alert(`Book ${id} is available`);
-        navigate(`/borrowBook/${id}`);
-
-      } else {
-        alert(`Book ${id} is not available`);
-      }
-    })
-    .catch(error => console.error(error));
-}
-*/
+  
 
   async function checkAvailability(id) {
     try {
-      const response = await axios.get(`http://localhost:3001/api/checkAvailability/${id}`);
-      console.log(response.data)
-      
-      if(response.data.available){
-        navigate(`/borrowBook/${id}`);
-     }
-     else alert("not abailable")
+      const token = sessionStorage.getItem("authToken");
+      const response = await axios.get(`http://localhost:3001/api/checkAvailability/${id}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+  
+      if (response.data.available) {
+        alert("Book Borrowed Successfully !");
+        //navigate(`/borrowBook/${id}`);
+        
+
+        try {
+          const response = await axios.put(`http://localhost:3001/borrow/${id}`, {
+            libraryCard: sessionID,
+            date: currentDate, 
+          });
+          setBook(response.data);
+          //alert( "ok");
+        } catch (error) {
+          console.error(error);
+        }
+
+        axios
+      .post(`http://localhost:3001/addToBorrow/${id}`, {
+        libraryCard: sessionID,
+        date: currentDate ,
+      })
+       .then(() => {
+         alert(`You have borrowed the book on the date: ${currentDate}`);
+       });
+
+      setBorrowList([
+        ...borrowList,
+        {libraryCard: sessionID,borrowDate: currentDate}
+      ])
+
+      } else {
+        alert("Not available for borrowing!");
+      }
     } catch (error) {
       console.error(error);
     }
   }
   
-/*
-  const checkAvailability = (id) => {
-    //e.preventDefault();
-    axios
-        .get(`/api/checkAvailability?id=${id}`)
-      .then((response) => {
-        if (response.data.loggedIn) {
-          // Navigate to the user dashboard
-          window.location.href = `/borrowBook/${id}`;
-        } else {
-          alert("Invalid Id card Number or Password! ");
-          //setErrorMessage(response.data.message);
-        }
+
+  async function handleLogin(username, password) {
+    try {
+      const response = await axios.post('http://localhost:3001/login', {
+        username,
+        password,
       });
-  };
-*/
+
+      localStorage.setItem('sessionID', response.data.sessionID);
+      console.log(response.data.sessionID);
+      navigate('/');
+      
+    } catch (error) {
+      console.error(error);
+    }
+  }
 
   const indexOfLastBook = currentPage * booksPerPage;
   const indexOfFirstBook = indexOfLastBook - booksPerPage;
@@ -81,9 +131,6 @@ function checkAvailability(id) {
     pageNumbers.push(i);
   }
 
-
-  
-  
   const navigate = useNavigate();
 
   return (
@@ -142,16 +189,7 @@ function checkAvailability(id) {
                     Borroww
                   </button>
                 </td>
-                <td>
-                  <button
-                    onClick={() => {
-                      //deleteBook(book.name);
-                    }}
-                    className="btn btn-danger"
-                  >
-                    Return
-                  </button>
-                </td>
+                
               </tr>
             );
           })}

@@ -1,3 +1,11 @@
+/*
+
+WASTE
+
+
+*/
+
+
 import axios from "axios";
 import React, { useState } from "react";
 import { NavLink, useParams } from "react-router-dom";

@@ -35,16 +35,17 @@ app.get("/bookList",(req,res)=>{
 
   })
 })
-
-app.get("/borrowedBookList",(req,res)=>{
-
-  const sqlRetrieve = "SELECT * FROM BORROW"
+/*
+app.get("/borrowedBookList/:idUser",(req,res)=>{
+  const idUser = req.params.idUser;
+  alert(idUser);
+  const sqlRetrieve = "SELECT * FROM CRUDDATABASE.BORROW WHERE idUser = ?";
   db.query(sqlRetrieve,(err,result)=>{
     console.log(result)
     res.send(result)
-
   })
 })
+*/
 
 app.get("/userList",(req,res)=>{
 
@@ -90,11 +91,49 @@ app.delete("/delete/:name",(req,res)=>{
   const sqlDelete = "DELETE FROM LIBRARY WHERE name = ?"
   db.query(sqlDelete,name,(err,result)=>{
     if(err){
-    console.log(err)
+    console.log(err);
     }
   })
+  /*
+  if (err) {
+      console.log(err);
+      res.status(500).send('Error borrowing book');
+    } else if (result.affectedRows === 0) {
+      res.status(200).send('Book not found or already borrowed');
+    } else {
+      res.status(404).send('Book borrowed returned');
+    }
+  */
 })
+app.get('/borrowedBookList/:idUser', (req, res) => {
+  const idUser = req.params.idUser;
+  console.log("idUser is =", idUser);
+  const sqlRetrieve = "SELECT * FROM CRUDDATABASE.BORROW WHERE idUser = ?";
+  db.query(sqlRetrieve, [idUser], (err, result) => {
+    if (err) {
+      console.error(err);
+      res.status(500).send("Server error");
+    } else {
+      console.log(result);
+      res.send(result);
+    }
+  });
+});
 
+app.get('/borrowedBookList/:idUser', (req, res) => {
+  const idUser = req.params.idUser;
+  console.log("idUser is =", idUser);
+  const sqlRetrieve = "SELECT * FROM CRUDDATABASE.BORROW WHERE idUser = ?";
+  db.query(sqlRetrieve, [idUser], (err, result) => {
+    if (err) {
+      console.error(err);
+      res.status(500).send("Server error");
+    } else {
+      console.log(result);
+      res.send(result);
+    }
+  });
+});
 
 app.delete("/ret/:id",(req,res)=>{
   const id = req.params.id;
@@ -153,13 +192,30 @@ app.post('/userLogin', (req, res) => {
       const user = results[0];
       if (user.password === password) {
         // Passwords match, user is authenticated
-        res.json({ loggedIn: true });
+        const sessionID = user.libraryCard; // Generate a session ID
+        res.json({ loggedIn: true, sessionID });
+        //res.json({ loggedIn: true });
       } else {
         res.status(401).json({ message: 'Invalid password' });
       }
     }
   });
 });
+
+
+app.post('/userLogout', (req, res) => {
+
+  req.session.destroy((err) => {
+    if (err) {
+      console.error(err);
+      res.status(505).json({ message: 'Internaaaaal server error' });
+    } else {
+      res.json({ loggedOut: true });
+    }
+  });
+});
+
+
 
 app.post('/managerLogin', (req, res) => {
   const { id, password } = req.body;
@@ -212,8 +268,9 @@ app.get("/api/checkAvailability/:id", (req, res) => {
 });
 
 app.put('/borrow/:id', (req, res) => {
+  console.log("ok server put");
   const id = req.params.id;
-  const { libraryCard, password, borrowDate } = req.body;
+  const { libraryCard, date } = req.body;
 
   const sqlQuery = 'UPDATE CRUDDATABASE.LIBRARY SET availability = 0 WHERE id = ?';
   db.query(sqlQuery, [id], (err, result) => {
@@ -228,14 +285,36 @@ app.put('/borrow/:id', (req, res) => {
   });
 });
 
+app.put('/makeAvailable/:id', (req, res) => {
+  console.log("dhukse");
+  const id = req.params.id;
+  console.log(id);
+  const { availablity } = req.body;
+
+  const sqlQuery = 'UPDATE CRUDDATABASE.LIBRARY SET availability = 1 WHERE id = ?';
+  db.query(sqlQuery, [id], (err, result) => {
+    if (err) {
+      console.log(err);
+      res.status(500).send('Error borrowing book');
+    } else if (result.affectedRows === 0) {
+      res.status(200).send('Book not found or already borrowed');
+    } else {
+      res.status(404).send('Book borrowed returned');
+    }
+  });
+
+  
+});
+
 app.post('/addToBorrow/:id', (req, res) => {
   const idBook = req.params.id;
-  const { libraryCard,password, borrowDate } = req.body;
+  const { libraryCard, date } = req.body;
 //const idUser = req.body.libraryCard ;
-//const date = req.body.borrowDate; 
-console.log(libraryCard);
+//const date = req.body.date; 
+//alert(date);
+
   const insertBorrowQuery = 'INSERT INTO BORROW ( idUser,idBook, date) VALUES (?, ?, ?)';
-  db.query(insertBorrowQuery, [ libraryCard,idBook, borrowDate], (insertBorrowErr, insertBorrowResult) => {
+  db.query(insertBorrowQuery, [ libraryCard,idBook, date], (insertBorrowErr, insertBorrowResult) => {
     if (insertBorrowErr) {
       console.log(insertBorrowErr);
       res.status(500).send('Error adding book to borrow list');
@@ -244,14 +323,134 @@ console.log(libraryCard);
     }
   });
 });
+/*
+ app.get('/userNotification/:idUser', (req, res) => {
+    const idUser = req.params.idUser;
+
+    const cDate = new Date();
+    const year = cDate.getFullYear();
+    const month = (cDate.getMonth() + 1).toString().padStart(2, '0');
+    const day = cDate.getDate().toString().padStart(2, '0');
+    const curDate = `${year}${month}${day}`;
+    const currentDate = parseInt(curDate, 10);
+    console.log(currentDate);
+
+  
+    const sqlRetrieve = "SELECT * FROM CRUDDATABASE.BORROW WHERE idUser = ? AND (currentDate - date) > 0";
+    db.query(sqlRetrieve, [idUser], (err, result) => {
+      console.log("dhukse");
+      if (err) {
+        console.error(err);
+        res.status(505).send("Serveeeeeeer error");
+      } else {
+        console.log(result);
+        res.send(result);
+      }
+    });
+  });
+  */
+app.get('/borrowedBookList/:idUser', (req, res) => {
+  const idUser = req.params.idUser;
+
+  console.log("idUser is =", idUser);
+  const sqlRetrieve = "SELECT * FROM CRUDDATABASE.BORROW WHERE idUser = ?";
+  db.query(sqlRetrieve, [idUser], (err, result) => {
+    if (err) {
+      console.error(err);
+      res.status(500).send("Server error");
+    } else {
+      console.log(result);
+      res.send(result);
+    }
+  });
+});
+
+app.get('/borrowedBookListManager', (req, res) => {
+  //const idUser = req.params.idUser;
+
+  //console.log("idUser is =", idUser);
+  const sqlRetrieve = "SELECT * FROM CRUDDATABASE.BORROW ";
+  db.query(sqlRetrieve, (err, result) => {
+    if (err) {
+      console.error(err);
+      res.status(500).send("Server error");
+    } else {
+      console.log(result);
+      res.send(result);
+    }
+  });
+});
+
+app.get('/userNotification/:idUser', (req, res) => {
+  const idUser = req.params.idUser;
+
+  const cDate = new Date();
+    const year = cDate.getFullYear();
+    const month = (cDate.getMonth() + 1).toString().padStart(2, '0');
+    const day = cDate.getDate().toString().padStart(2, '0');
+    const curDate = `${year}${month}${day}`;
+    const currentDate = parseInt(curDate, 10);
+    //console.log(currentDate);
 
 
+  console.log("idUser is =", idUser);
+  const sqlRetrieve = "SELECT * FROM CRUDDATABASE.BORROW WHERE idUser = ? AND (? - date > 0)";
+  db.query(sqlRetrieve, [idUser, currentDate], (err, result) => {
+    if (err) {
+      console.error(err);
+      res.status(500).send("Server error");
+    } else {
+      console.log(result);
+      res.send(result);
+    }
+  });
+});
 
 
+app.get('/overdue', (req, res) => {
+ // const idUser = req.params.idUser;
+
+    const cDate = new Date();
+    const year = cDate.getFullYear();
+    const month = (cDate.getMonth() + 1).toString().padStart(2, '0');
+    const day = cDate.getDate().toString().padStart(2, '0');
+    const curDate = `${year}${month}${day}`;
+    const currentDate = parseInt(curDate, 10);
+    //console.log(currentDate);
+
+
+  //console.log("idUser is =", idUser);
+  const sqlRetrieve = "SELECT * FROM CRUDDATABASE.BORROW WHERE  (? - date > 0)";
+  db.query(sqlRetrieve, [currentDate], (err, result) => {
+    if (err) {
+      console.error(err);
+      res.status(505).send("Server error");
+    } else {
+      console.log(result);
+      res.send(result);
+    }
+  });
+});
+
+app.get('/api/mostFrequentBookId', async (req, res) => {
+  const mostFrequentBookId = await BORROW.aggregate('idBook', 'COUNT', { distinct: true})
+    .then((result) => {
+      if (result.length === 0) {
+        return null;
+      }
+      const mostFrequent = result.reduce((prev, curr) => (prev.count > curr.count ? prev : curr));
+      return mostFrequent.idBook;
+    })
+    .catch((error) => {
+      console.error(error);
+      return null;
+    });
+  res.json({ mostFrequentBookId });
+});
 
 
 app.listen(3001,()=>{
 
   console.log("App listening to port : 3001")
 
-})
+});

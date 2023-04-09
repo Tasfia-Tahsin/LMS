@@ -4,10 +4,10 @@ import { NavLink } from "react-router-dom";
 import { useNavigate } from 'react-router-dom';
 import { useParams } from 'react-router-dom';
 //import Header from "../components/Header";
-import Header from "./Header"
+import Header from "./HeaderManager"
 import './styles2.css';
 
-export default function BorrowedBookList() {
+export default function Overdue() {
   const [currentPage, setCurrentPage] = useState(1);
   const [booksPerPage, setBooksPerPage] = useState(6);
   const [bookList, setBookList] = useState([]);
@@ -15,22 +15,21 @@ export default function BorrowedBookList() {
   const sessionID = sessionStorage.getItem("sessionID");
   
   useEffect(() => {
-    const idUser = sessionStorage.getItem("sessionID");
-    if (idUser) {
-      axios.get(`http://localhost:3001/borrowedBookList/${idUser}`).then((response) => {
+    //const idUser = sessionStorage.getItem("sessionID");
+   
+   // if (idUser) {// alert(idUser);
+      axios.get('http://localhost:3001/overdue').then((response) => {
+        alert("dhukse");
         setBookList(response.data);
       });
-    }
+    //}
   }, []);
 
-    const returnBook = (id, idBook) => {
-    
-      
-      axios.delete(`http://localhost:3001/ret/${id}`);
-      axios.put(`http://localhost:3001/makeAvailable/${idBook}`,{
-        availability : 1 
-      })
-    
+  
+
+    const returnBook = (id) => {
+    axios
+      .delete(`http://localhost:3001/ret/${id}`)
       .then((response) => {
         // update the bookList state after deleting the book
         setBookList(bookList.filter((book) => book.id !== id));
@@ -40,26 +39,6 @@ export default function BorrowedBookList() {
         console.log(error);
       });
   };
-  
- /*
-  const returnBook = (id) => {
-    axios
-      .all([
-        axios.delete(`http://localhost:3001/ret/${id}`),
-        axios.put(`http://localhost:3001/makeAvailable/${id}`)
-      ])
-      .then(axios.spread((deleteResponse, putResponse) => {
-        // update the bookList state after deleting the book
-        setBookList(bookList.filter((book) => book.id !== id));
-        navigate(`/borrowedBookList`);
-      }))
-      .catch((error) => {
-        console.log("hoy nai");
-      });
-  };
-  */
-  
-  
   const indexOfLastBook = currentPage * booksPerPage;
   const indexOfFirstBook = indexOfLastBook - booksPerPage;
   const currentBooks = bookList
@@ -119,8 +98,8 @@ export default function BorrowedBookList() {
                 <td>
                   <button
                     onClick={() => {
-                      returnBook(book.id, book.idBook);
-                      //makeAvailable(book.id);
+                      returnBook(book.id);
+                      
                     }}
                     className="btn btn-danger"
                   >
